@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>主页</title>
+<style>
+/* 让页面所有元素的padding和margin都设置为0 */ 
+*{margin:0;padding:0;box-sizing:border-box;}
+/* 设置背景图，字体设置为微软雅黑 */ 
+body{background:url(bg.jpg);font-family: "微软雅黑", sans-serif;}
+/* 引用图片高度设置为28px，就是页面最上方像屋檐一样的黑色图 */ 
+.headtop{background:url(topbg.jpg);height:28px;}
+/* 整个登录框的css，并使用绝对定位居中 */ 
+.login { 
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -150px 0 0 -150px;
+    width:300px;
+    height:300px;
+}
+/* 前面分析过的h1标签的css，text-shadow设置阴影使文字更好看，letter-spacing设置字符间距 */ 
+.login h1 { color:#555555; text-shadow: 0px 10px 8px #CDC673; letter-spacing:2px;text-align:center;margin-bottom:20px; }
+/* 两个输入框的css，border属性设置边框线粗细以及颜色，border-radius设置边框的圆角角度 */
+input{
+    padding:10px;
+    width:100%;
+    color:white;
+    margin-bottom:10px;
+    border: 1px solid black;
+    border-radius:4px;
+    letter-spacing:2px;
+}
+/* 登录按钮的css，cursor:pointer当鼠标移到按钮上面时变成小手形状 */
+form button{
+    width:100%;
+    padding:10px;
+    background-color:#CDC673;
+    border:1px solid black;
+    border-radius:4px;
+    cursor:pointer; 
+}                                                                                                                                                  
+</style>
+</head>
+<body>
+<div class="headtop"></div>
+<div class="login">
+  <h1>主页</h1>
+</div>
+</body>
+</html>
+
+<script>
+// 获取 token
+// var token = result.data.token;
+/* var token = '123456';
+
+// 动态创建一个不可见的iframe，在iframe中加载一个跨域HTML
+var iframe = document.createElement("iframe");
+iframe.src = "http://app1.com/localstorage.html";
+document.body.append(iframe);
+// 使用postMessage()方法将token传递给iframe
+setTimeout(function () {
+    iframe.contentWindow.postMessage(token, "http://app1.com");
+}, 4000);
+setTimeout(function () {
+    iframe.remove();
+}, 6000);
+
+// 在这个iframe所加载的HTML中绑定一个事件监听器，当事件被触发时，把接收到的token数据写入localStorage
+window.addEventListener('message', function (event) {
+    localStorage.setItem('token', event.data)
+}, false); */
+
+</script>
