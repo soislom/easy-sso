@@ -1,4 +1,4 @@
-package com.easy.sso.components.shiro;
+package com.easy.sso.components.shiro.realm;
 
 import java.util.Collection;
 

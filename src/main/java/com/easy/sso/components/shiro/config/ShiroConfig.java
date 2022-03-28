@@ -28,9 +28,9 @@ import org.springframework.context.annotation.Configuration;
 
 import com.easy.sso.components.filter.JwtFilter;
 import com.easy.sso.components.shiro.JwtCredentialsMatcher;
-import com.easy.sso.components.shiro.JwtRealm;
-import com.easy.sso.components.shiro.MultiRealmAuthenticator;
-import com.easy.sso.components.shiro.ShiroRealm;
+import com.easy.sso.components.shiro.realm.JwtRealm;
+import com.easy.sso.components.shiro.realm.MultiRealmAuthenticator;
+import com.easy.sso.components.shiro.realm.ShiroRealm;
 
 /**
  * shiro 基本配置

@@ -1,8 +1,5 @@
-package com.easy.sso.components.shiro;
+package com.easy.sso.components.shiro.realm;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.shiro.SecurityUtils;
@@ -17,45 +14,18 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import com.easy.sso.components.shiro.UserAuthInterface;
 import com.easy.sso.pojo.User;
 
 /**
  * 同时开启身份验证和权限验证，需要继承 AuthorizingRealm 并实现其 doGetAuthenticationInfo()和
  * doGetAuthorizationInfo 两个方法
  */
-@SuppressWarnings("serial")
 public class ShiroRealm extends AuthorizingRealm {
 
-	public static Map<String, User> userMap = new HashMap<String, User>(16);
-	public static Map<String, Set<String>> roleMap = new HashMap<String, Set<String>>(16);
-	public static Map<String, Set<String>> permMap = new HashMap<String, Set<String>>(16);
-
-	static {
-		User user1 = new User("graython", "dd524c4c66076d1fa07e1fa1c94a91233772d132");
-		User user2 = new User("plum", "cce369436bbb9f0325689a3a6d5d6b9b8a3f39a0");
-
-		userMap.put("graython", user1);
-		userMap.put("plum", user2);
-
-		roleMap.put("graython", new HashSet<String>() {
-			{
-				add("admin");
-
-			}
-		});
-
-		roleMap.put("plum", new HashSet<String>() {
-			{
-				add("guest");
-			}
-		});
-		permMap.put("plum", new HashSet<String>() {
-			{
-				add("article:read");
-			}
-		});
-	}
+	private @Autowired UserAuthInterface userAuthInterface;
 
 	/**
 	 * 限定这个 Realm 只处理 UsernamePasswordToken
@@ -73,7 +43,7 @@ public class ShiroRealm extends AuthorizingRealm {
 		// 从 AuthenticationToken 中获取当前用户
 		String username = (String) token.getPrincipal();
 		// 查询数据库获取用户信息，此处使用 Map 来模拟数据库
-		User user = userMap.get(username);
+		User user = userAuthInterface.selectOne(username);
 
 		// 用户不存在
 		if (user == null) {
@@ -102,9 +72,9 @@ public class ShiroRealm extends AuthorizingRealm {
 		User currentUser = (User) SecurityUtils.getSubject().getPrincipal();
 		// UserEntity currentUser = (UserEntity)principals.getPrimaryPrincipal();
 		// 查询数据库，获取用户的角色信息
-		Set<String> roles = roleMap.get(currentUser.getName());
+		Set<String> roles = userAuthInterface.selectRoles(currentUser.getName());
 		// 查询数据库，获取用户的权限信息
-		Set<String> perms = permMap.get(currentUser.getName());
+		Set<String> perms = userAuthInterface.selectPrimess(currentUser.getName());
 
 		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 		info.setRoles(roles);

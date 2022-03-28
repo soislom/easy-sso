@@ -4,11 +4,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.easy.sso.components.filter.JwtFilter;
+import com.easy.sso.components.spring.SpringContextUtil;
+
 @Controller
 public class RouterController {
 
 	@RequestMapping("/login")
 	public String loginPage() {
+		JwtFilter jwtFilter = SpringContextUtil.getBean("jwtFilter", JwtFilter.class);
+		System.out.println(jwtFilter);
 		return "/login";
 	}
 

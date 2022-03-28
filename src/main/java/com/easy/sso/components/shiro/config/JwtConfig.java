@@ -12,26 +12,26 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class JwtConfig {
-
-	@Value("#[${easy.sso.jwt.expire.time}]")
-	private long expireTime;
-
-	@Value("${easy.sso.jwt.secret}")
-	private String secret;
-
-	@Value("${easy.sso.jwt.secret}")
-	private String authHeader;
-
-	public long getExpireTime() {
-		return expireTime;
-	}
-
-	public String getSecret() {
-		return secret;
-	}
-
-	public String getAuthHeader() {
-		return authHeader;
-	}
+//
+//	@Value("${easy.sso.jwt.expire.time}")
+//	private long expireTime;
+//
+//	@Value("${easy.sso.jwt.secret}")
+//	private String secret;
+//
+//	@Value("${easy.sso.jwt.secret}")
+//	private String authHeader;
+//
+//	public long getExpireTime() {
+//		return expireTime;
+//	}
+//
+//	public String getSecret() {
+//		return secret;
+//	}
+//
+//	public String getAuthHeader() {
+//		return authHeader;
+//	}
 
 }
