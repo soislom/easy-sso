@@ -35,7 +35,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 		String redirect = req.getParameter("redirect");
 		if (null != redirect) {
 			log.info("{} will redirect to : {}", req.getSession().getId(), redirect);
-			SessionUtil.set(req, redirect);
+			SessionUtil.setRedirect(req, redirect);
 		}
 		HttpServletRequest httpServletRequest = WebUtils.toHttp(request);
 		HttpServletResponse httpServletResponse = WebUtils.toHttp(response);
@@ -81,7 +81,8 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 	 */
 	@Override
 	protected boolean isLoginAttempt(ServletRequest request, ServletResponse response) {
-		return ((HttpServletRequest) request).getHeader(JwtUtils.AUTH_HEADER) == null;
+		return WebUtils.toHttp(request).getHeader(JwtUtils.AUTH_HEADER) == null
+				&& WebUtils.toHttp(request).getParameter("access_token") == null;
 	}
 
 	/**
@@ -98,12 +99,14 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 		try {
 			Subject subject = getSubject(request, response);
 			subject.login(token); // 交给 Shiro 去进行登录验证
+			log.info("{} login success", token);
 			return onLoginSuccess(token, subject, request, response);
 		} catch (AuthenticationException e) {
+			log.info("{} login failed: {}", token, e.getMessage());
 			return onLoginFailure(token, e, request, response);
 		}
 	}
-
+	
 	/**
 	 * 从 Header 里提取 JWT token
 	 */
@@ -111,6 +114,9 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 	protected AuthenticationToken createToken(ServletRequest servletRequest, ServletResponse servletResponse) {
 		HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
 		String authorization = httpServletRequest.getHeader(JwtUtils.AUTH_HEADER);
+		if (authorization == null) {
+			authorization = servletRequest.getParameter("access_token");
+		}
 		JwtToken token = new JwtToken(authorization);
 		return token;
 	}
@@ -124,6 +130,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 		httpResponse.setCharacterEncoding("UTF-8");
 		httpResponse.setContentType("text/html;charset=UTF-8");
 
+		log.info("redirect to new page of the login!");
 		SessionUtil.redirect(servletResponse);
 		return false;
 	}
@@ -134,6 +141,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 	@Override
 	protected boolean onLoginSuccess(AuthenticationToken token, Subject subject, ServletRequest request,
 			ServletResponse response) throws Exception {
+		HttpServletRequest httpRequest = WebUtils.toHttp(request);
 		HttpServletResponse httpResponse = WebUtils.toHttp(response);
 		String newToken = null;
 		if (token instanceof JwtToken) {
@@ -141,6 +149,9 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 		}
 		if (newToken != null)
 			httpResponse.setHeader(JwtUtils.AUTH_HEADER, newToken);
+		String redirect = null;
+		if ((redirect = WebUtils.toHttp(httpRequest).getParameter("redirect")) != null)
+			httpResponse.sendRedirect(redirect + "?access_token=" + newToken);
 		return true;
 	}
 

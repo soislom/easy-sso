@@ -1,6 +1,9 @@
 package com.easy.sso.controller;
 
-import javax.servlet.ServletResponse;
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.SecurityUtils;
@@ -10,23 +13,27 @@ import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.easy.sso.Response;
+import com.easy.sso.components.redis.RedisUtils;
 import com.easy.sso.components.shiro.JwtUtils;
 import com.easy.sso.pojo.User;
 
-@RestController
+@Controller
 public class LoginController {
 
-	@PostMapping("login.json")
-	@CrossOrigin
-	public Object userLogin(@RequestBody User user, ServletResponse response) {
+	private @Autowired RedisUtils redisUtils;
 
+	@PostMapping("/login.json")
+	public String userLogin(@ModelAttribute User user,
+			@RequestParam(value = "redirect", required = false) String redirect, HttpServletResponse response,
+			HttpServletRequest request) throws IOException, ServletException {
 		// 获取当前用户主体
 		Subject subject = SecurityUtils.getSubject();
 		String msg = null;
@@ -39,7 +46,12 @@ public class LoginController {
 			String jwtToken = JwtUtils.sign(user.getName(), JwtUtils.SECRET);
 			// 将签发的 JWT token 设置到 HttpServletResponse 的 Header 中
 			((HttpServletResponse) response).setHeader(JwtUtils.AUTH_HEADER, jwtToken);
-			return Response.success(msg);
+			redisUtils.expire(jwtToken, 30 * 60);
+			if (redirect != null) {
+				return "redirect:" + redirect + "?access_token=" + jwtToken;
+			} else {
+				return "/index?access_token=" + jwtToken;
+			}
 		} catch (UnknownAccountException uae) { // 账号不存在
 			msg = "用户名与密码不匹配，请检查后重新输入！";
 		} catch (IncorrectCredentialsException ice) { // 账号与密码不匹配
@@ -49,8 +61,8 @@ public class LoginController {
 		} catch (AuthenticationException ae) { // 其他身份验证异常
 			msg = "登录异常，请联系管理员！";
 		}
-		return Response.failed(msg);
-
+		request.setAttribute("msg", msg);
+		return "/login";
 	}
 
 	@GetMapping("/logout")

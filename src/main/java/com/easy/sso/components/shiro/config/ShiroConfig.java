@@ -71,9 +71,9 @@ public class ShiroConfig {
 	}
 
 	/**
-	 * 不向 Spring容器中注册 JwtFilter Bean，防止 Spring 将 JwtFilter 注册为全局过滤器
-	 * 全局过滤器会对所有请求进行拦截，而本例中只需要拦截除 /login 和 /logout 外的请求 另一种简单做法是：直接去掉
-	 * jwtFilter()上的 @Bean 注解
+	 * 不向 Spring容器中注册 JwtFilter Bean，防止 Spring 将 JwtFilter 注册为全局过滤器<br>
+	 * 全局过滤器会对所有请求进行拦截，而本例中只需要拦截除 /login 和 /logout 外的请求<br>
+	 * 另一种简单做法是：直接去掉 jwtFilter()上的 @Bean 注解
 	 */
 	@Bean
 	public FilterRegistrationBean<Filter> registration(JwtFilter filter) {
@@ -105,8 +105,10 @@ public class ShiroConfig {
 
 		LinkedHashMap<String, String> filterChainDefinitionMap = new LinkedHashMap<String, String>();
 		filterChainDefinitionMap.put("/login", "anon"); // 可匿名访问
+		filterChainDefinitionMap.put("/favicon.ico", "anon"); // 可匿名访问
 		filterChainDefinitionMap.put("/login.json", "anon"); // 可匿名访问
 		filterChainDefinitionMap.put("/logout", "logout"); // 退出登录
+		filterChainDefinitionMap.put("/assets/**", "logout"); // 退出登录
 		filterChainDefinitionMap.put("/**", "jwtFilter,authc"); // 需登录才能访问
 		shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 		return shiroFilterFactoryBean;

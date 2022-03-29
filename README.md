@@ -22,7 +22,7 @@
 >
 > ​	
 
-
+> 生成启动脚本命令： mvn clean package appassembler:assemble
 
 ```css
  [ ] 没选中的复选框
