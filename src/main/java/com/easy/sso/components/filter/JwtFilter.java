@@ -1,7 +1,5 @@
 package com.easy.sso.components.filter;
 
-import java.io.PrintWriter;
-
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -19,19 +17,26 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.easy.sso.components.shiro.JwtToken;
 import com.easy.sso.components.shiro.JwtUtils;
+import com.easy.sso.util.SessionUtil;
 
 /**
  * 自定义的认证过滤器，用来拦截Header中携带 JWT token的请求
  */
 public class JwtFilter extends BasicHttpAuthenticationFilter {
 
-	private Logger log = LoggerFactory.getLogger(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(JwtFilter.class.getName());
 
 	/**
 	 * 前置处理
 	 */
 	@Override
 	protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
+		HttpServletRequest req = (HttpServletRequest) request;
+		String redirect = req.getParameter("redirect");
+		if (null != redirect) {
+			log.info("{} will redirect to : {}", req.getSession().getId(), redirect);
+			SessionUtil.set(req, redirect);
+		}
 		HttpServletRequest httpServletRequest = WebUtils.toHttp(request);
 		HttpServletResponse httpServletResponse = WebUtils.toHttp(response);
 		// 跨域时会首先发送一个option请求，这里我们给option请求直接返回正常状态
@@ -52,9 +57,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 	}
 
 	/**
-	 * 过滤器拦截请求的入口方法 
-	 * 返回 true 则允许访问 
-	 * 返回false 则禁止访问，会进入 onAccessDenied()
+	 * 过滤器拦截请求的入口方法 返回 true 则允许访问 返回false 则禁止访问，会进入 onAccessDenied()
 	 */
 	@Override
 	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
@@ -119,11 +122,9 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 	protected boolean onAccessDenied(ServletRequest servletRequest, ServletResponse servletResponse) throws Exception {
 		HttpServletResponse httpResponse = WebUtils.toHttp(servletResponse);
 		httpResponse.setCharacterEncoding("UTF-8");
-		httpResponse.setContentType("application/json;charset=UTF-8");
-		httpResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
-		PrintWriter writer = httpResponse.getWriter();
-		writer.write("{\"errCode\": 401, \"msg\": \"UNAUTHORIZED\"}");
-		fillCorsHeader(WebUtils.toHttp(servletRequest), httpResponse);
+		httpResponse.setContentType("text/html;charset=UTF-8");
+
+		SessionUtil.redirect(servletResponse);
 		return false;
 	}
 
@@ -149,7 +150,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 	@Override
 	protected boolean onLoginFailure(AuthenticationToken token, AuthenticationException e, ServletRequest request,
 			ServletResponse response) {
-		// 此处直接返回 false ，交给后面的  onAccessDenied()方法进行处理
+		// 此处直接返回 false ，交给后面的 onAccessDenied()方法进行处理
 		return false;
 	}
 

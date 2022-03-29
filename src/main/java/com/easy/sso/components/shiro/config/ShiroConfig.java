@@ -34,12 +34,15 @@ import com.easy.sso.components.shiro.realm.ShiroRealm;
 
 /**
  * shiro 基本配置
+ * 
  * @author wuchen
  * @date 2022-03-28
  *
  */
 @Configuration
 public class ShiroConfig {
+
+	public static final String DEFAULT_LOGIN_URL = "/login";
 
 	/**
 	 * 交由 Spring 来自动地管理 Shiro-Bean 的生命周期
@@ -69,8 +72,8 @@ public class ShiroConfig {
 
 	/**
 	 * 不向 Spring容器中注册 JwtFilter Bean，防止 Spring 将 JwtFilter 注册为全局过滤器
-	 * 全局过滤器会对所有请求进行拦截，而本例中只需要拦截除 /login 和 /logout 外的请求 
-	 * 另一种简单做法是：直接去掉 jwtFilter()上的 @Bean 注解
+	 * 全局过滤器会对所有请求进行拦截，而本例中只需要拦截除 /login 和 /logout 外的请求 另一种简单做法是：直接去掉
+	 * jwtFilter()上的 @Bean 注解
 	 */
 	@Bean
 	public FilterRegistrationBean<Filter> registration(JwtFilter filter) {
@@ -91,7 +94,7 @@ public class ShiroConfig {
 	ShiroFilterFactoryBean shiroFilterFactoryBean(SecurityManager securityManager) {
 		ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
 		shiroFilterFactoryBean.setSecurityManager(securityManager);
-		shiroFilterFactoryBean.setLoginUrl("/login");
+		shiroFilterFactoryBean.setLoginUrl(DEFAULT_LOGIN_URL);
 		shiroFilterFactoryBean.setSuccessUrl("/authorized");
 		shiroFilterFactoryBean.setUnauthorizedUrl("/unauthorized");
 
@@ -102,7 +105,6 @@ public class ShiroConfig {
 
 		LinkedHashMap<String, String> filterChainDefinitionMap = new LinkedHashMap<String, String>();
 		filterChainDefinitionMap.put("/login", "anon"); // 可匿名访问
-		filterChainDefinitionMap.put("/index", "anon"); // 可匿名访问
 		filterChainDefinitionMap.put("/login.json", "anon"); // 可匿名访问
 		filterChainDefinitionMap.put("/logout", "logout"); // 退出登录
 		filterChainDefinitionMap.put("/**", "jwtFilter,authc"); // 需登录才能访问

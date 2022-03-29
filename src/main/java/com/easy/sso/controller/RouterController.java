@@ -1,26 +1,32 @@
 package com.easy.sso.controller;
 
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import com.easy.sso.components.filter.JwtFilter;
-import com.easy.sso.components.spring.SpringContextUtil;
 
 @Controller
 public class RouterController {
 
 	@RequestMapping("/login")
 	public String loginPage() {
-		JwtFilter jwtFilter = SpringContextUtil.getBean("jwtFilter", JwtFilter.class);
-		System.out.println(jwtFilter);
 		return "/login";
 	}
 
+	/**
+	 * 
+	 * @param redirect 转发的路径
+	 * @param response
+	 * @throws IOException
+	 */
 	@RequestMapping("/index")
-	public String index(@RequestParam(name = "sessionId", defaultValue = "#") String sessionId) {
-		System.out.println(sessionId);
-		return "/index";
+	public void index(@RequestParam(name = "redirect", defaultValue = "#") String redirect,
+			HttpServletResponse response) throws IOException {
+		System.out.println(redirect);
+		response.sendRedirect(redirect);
 	}
 
 }
