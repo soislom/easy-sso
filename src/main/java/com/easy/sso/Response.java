@@ -65,6 +65,9 @@ public class Response<T> {
 	public static <T> Response<T> success(String message) {
 		return builder(SUCCESS_CODE, message, null);
 	}
+	public static <T> Response<T> success(String message, T value) {
+		return builder(SUCCESS_CODE, message, value);
+	}
 
 	public static <T> Response<T> builder(ResponseState state) {
 		return builder(state.getCode(), state.getMessage(), null);

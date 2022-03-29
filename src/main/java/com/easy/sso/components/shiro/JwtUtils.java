@@ -27,6 +27,8 @@ public class JwtUtils {
 
 	// 请求头
 	public static final String AUTH_HEADER = "X-Authorization-With";
+	// 默认token认证参数名称
+	public static final String ACCESS_TOKEN = "access_token";
 
 	/**
 	 * 验证token是否正确

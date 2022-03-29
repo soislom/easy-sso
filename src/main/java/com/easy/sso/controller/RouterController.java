@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class RouterController {
@@ -14,7 +15,7 @@ public class RouterController {
 	}
 
 	@RequestMapping("/index")
-	public String indexPage() throws IOException {
+	public String indexPage(@RequestParam(value = "access_token", required = false) String access_token) throws IOException {
 		return "/index";
 	}
 

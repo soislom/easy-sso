@@ -2,13 +2,16 @@ package com.easy.sso.enums;
 
 /**
  * 全局返回状态码
+ * 
  * @author wuchen
  * @date 2022-03-28
  *
  */
 public enum ResponseState {
 
-	UNAUTH(401, "没有权限访问");
+	UNAUTH(401, "没有权限访问"), 
+	FAILED(402, "没有权限访问"), 
+	SUCCESS(200, "操作成功");
 
 	private Integer code;
 
