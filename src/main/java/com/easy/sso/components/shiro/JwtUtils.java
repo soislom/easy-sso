@@ -26,7 +26,7 @@ public class JwtUtils {
 	public static final String SECRET = "SECRET_VALUE";
 
 	// 请求头
-	public static final String AUTH_HEADER = "X-Authorization-With";
+	public static final String AUTH_HEADER = "X-ACCESS-TOKEN";
 	// 默认token认证参数名称
 	public static final String ACCESS_TOKEN = "access_token";
 

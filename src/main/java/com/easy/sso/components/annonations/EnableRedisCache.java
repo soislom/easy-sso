@@ -19,7 +19,7 @@ import com.easy.sso.components.redis.RedisConfig;
 @Configuration
 @Import(RedisConfig.class)
 @PropertySource(value = {
-		"classpath:/index.properties" }, ignoreResourceNotFound = true, encoding = "UTF-8", name = "index.properties")
+		"classpath:/*.properties" }, ignoreResourceNotFound = true, encoding = "UTF-8", name = "index.properties")
 public @interface EnableRedisCache {
 
 }

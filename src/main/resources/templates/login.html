@@ -59,7 +59,7 @@ form button {
 	<div class="headtop"></div>
 	<div class="login">
 		<h1>Login</h1>
-		<div th:if="${#session != null}">
+		<div th:if="${#session.getAttribute('redirect') != null}">
 			<form
 				th:action="${'/login.json?redirect=' +#session.getAttribute('redirect')}"
 				method="post">
@@ -70,7 +70,7 @@ form button {
 				<p th:text="${msg}"></p>
 			</form>
 		</div>
-		<div th:if="${#session == null}">
+		<div th:unless="${#session.getAttribute('redirect') != null}">
 			<form action="/login.json"
 				method="post">
 				<input type="text" name="name" id="name" placeholder="用户名"

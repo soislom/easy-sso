@@ -130,7 +130,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 		httpResponse.setCharacterEncoding("UTF-8");
 		httpResponse.setContentType("text/html;charset=UTF-8");
 
-		log.info("redirect to new page of the login!");
+		log.warn("redirect to new page of the login!");
 		SessionUtil.redirect(servletResponse);
 		return false;
 	}
